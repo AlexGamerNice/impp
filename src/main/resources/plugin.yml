@@ -1,0 +1,17 @@
+name: impp
+version: ${project.version}
+main: com.impp.ImppPlugin
+api-version: "1.20"
+
+commands:
+  imp:
+    description: Send a chat message as an allowed username.
+    usage: /imp <username> <message>
+  impp:
+    description: Grant one username permission to impersonate another.
+    usage: /impp <username1> <username2>
+
+permissions:
+  impp.manage:
+    description: Allows managing impersonation grants with /impp.
+    default: op
