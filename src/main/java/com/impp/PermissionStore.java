@@ -132,21 +132,25 @@ public final class PermissionStore {
 
     public Set<String> getAllowedTargets(String impersonatorName, boolean isOperator) {
         if (isOperator) {
-            for (OfflinePlayer offline : Bukkit.getOfflinePlayers()) {
-                if (offline.getName() != null) {
-                    registerName(offline.getName());
-                }
-            }
-            for (org.bukkit.entity.Player online : Bukkit.getOnlinePlayers()) {
-                registerName(online.getName());
-            }
-            return new LinkedHashSet<>(knownNamesByLower.values());
+            return getAllKnownNames();
         }
         String impersonatorKey = toKey(impersonatorName);
         Set<String> allowed = permissionsByImpersonatorLower.getOrDefault(impersonatorKey, Collections.emptySet());
         return allowed.stream()
                 .map(this::resolveDisplayName)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    public Set<String> getAllKnownNames() {
+        for (OfflinePlayer offline : Bukkit.getOfflinePlayers()) {
+            if (offline.getName() != null) {
+                registerName(offline.getName());
+            }
+        }
+        for (org.bukkit.entity.Player online : Bukkit.getOnlinePlayers()) {
+            registerName(online.getName());
+        }
+        return new LinkedHashSet<>(knownNamesByLower.values());
     }
 
     public void registerName(String name) {

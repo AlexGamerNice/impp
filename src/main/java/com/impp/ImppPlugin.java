@@ -22,17 +22,25 @@ public final class ImppPlugin extends JavaPlugin {
 
         PluginCommand impCommand = getCommand("imp");
         PluginCommand imppCommand = getCommand("impp");
-        if (impCommand == null || imppCommand == null) {
+        PluginCommand imprCommand = getCommand("impr");
+        PluginCommand imprrCommand = getCommand("imprr");
+        if (impCommand == null || imppCommand == null || imprCommand == null || imprrCommand == null) {
             getLogger().severe("Commands are missing from plugin.yml; disabling plugin.");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
 
         ImpCommand impExecutor = new ImpCommand(permissionStore, chatRouter);
+        ImprCommand imprExecutor = new ImprCommand(permissionStore, chatRouter);
+        ImprrCommand imprrExecutor = new ImprrCommand(permissionStore, chatRouter);
         ImppCommand imppExecutor = new ImppCommand(this, permissionStore);
 
         impCommand.setExecutor(impExecutor);
         impCommand.setTabCompleter(impExecutor);
+        imprCommand.setExecutor(imprExecutor);
+        imprCommand.setTabCompleter(imprExecutor);
+        imprrCommand.setExecutor(imprrExecutor);
+        imprrCommand.setTabCompleter(imprrExecutor);
         imppCommand.setExecutor(imppExecutor);
         imppCommand.setTabCompleter(imppExecutor);
 

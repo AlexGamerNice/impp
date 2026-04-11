@@ -7,6 +7,12 @@ commands:
   imp:
     description: Send a chat message as an allowed username.
     usage: /imp <username> <message>
+  impr:
+    description: Impersonate while hiding message from one player.
+    usage: /impr <hidden-player> <display-player> <message>
+  imprr:
+    description: Impersonate while hiding from many players using speaker:
+    usage: /imprr <excluded1> <excluded2> ... <speaker>: <message>
   impp:
     description: Grant one username permission to impersonate another.
     usage: /impp <username1> <username2>

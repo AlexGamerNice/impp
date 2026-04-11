@@ -1,10 +1,7 @@
 package com.impp;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -57,22 +54,14 @@ public final class ImpCommand implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (!(sender instanceof Player player)) {
-            return Collections.emptyList();
+            return List.of();
         }
 
         if (args.length == 1) {
-            String prefix = args[0].toLowerCase(Locale.ROOT);
             Set<String> allowed = permissionStore.getAllowedTargets(player.getName(), player.isOp());
-            List<String> completions = new ArrayList<>();
-            for (String candidate : allowed) {
-                if (candidate.toLowerCase(Locale.ROOT).startsWith(prefix)) {
-                    completions.add(candidate);
-                }
-            }
-            completions.sort(String.CASE_INSENSITIVE_ORDER);
-            return completions;
+            return NameSuggestionUtil.suggest(allowed, args[0], Set.of());
         }
-        return Collections.emptyList();
+        return List.of();
     }
 
     private boolean canImpersonate(Player player, String requestedTarget) {
@@ -82,11 +71,6 @@ public final class ImpCommand implements CommandExecutor, TabCompleter {
         if (player.getName().equalsIgnoreCase(requestedTarget)) {
             return true;
         }
-        for (String allowed : permissionStore.getAllowedTargets(player.getName(), false)) {
-            if (allowed.equalsIgnoreCase(requestedTarget)) {
-                return true;
-            }
-        }
-        return false;
+        return permissionStore.canImpersonate(player.getName(), requestedTarget, false);
     }
 }
