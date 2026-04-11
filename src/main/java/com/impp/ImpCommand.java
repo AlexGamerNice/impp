@@ -20,10 +20,6 @@ public final class ImpCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player player)) {
-            sender.sendMessage("Only players can use this command.");
-            return true;
-        }
         if (args.length < 2) {
             sender.sendMessage("Usage: /imp <username> <message>");
             return true;
@@ -35,7 +31,7 @@ public final class ImpCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        if (!canImpersonate(player, targetName)) {
+        if (!canImpersonate(sender, targetName)) {
             sender.sendMessage("You are not allowed to impersonate " + targetName + ".");
             return true;
         }
@@ -53,18 +49,22 @@ public final class ImpCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        if (!(sender instanceof Player player)) {
-            return List.of();
-        }
-
         if (args.length == 1) {
-            Set<String> allowed = permissionStore.getAllowedTargets(player.getName(), player.isOp());
+            Set<String> allowed;
+            if (sender instanceof Player player) {
+                allowed = permissionStore.getAllowedTargets(player.getName(), player.isOp());
+            } else {
+                allowed = permissionStore.getAllKnownNames();
+            }
             return NameSuggestionUtil.suggest(allowed, args[0], Set.of());
         }
         return List.of();
     }
 
-    private boolean canImpersonate(Player player, String requestedTarget) {
+    private boolean canImpersonate(CommandSender sender, String requestedTarget) {
+        if (!(sender instanceof Player player)) {
+            return true;
+        }
         if (player.isOp()) {
             return true;
         }
