@@ -25,41 +25,29 @@ public final class ImprCommand implements CommandExecutor, TabCompleter {
             return true;
         }
         if (args.length < 2) {
-            sender.sendMessage("Usage: /impr <hidden-player> [display-player] <message>");
+            sender.sendMessage("Usage: /impr <player> <message>");
             return true;
         }
 
-        String hiddenPlayer = args[0].trim();
-        if (hiddenPlayer.isEmpty()) {
-            sender.sendMessage("Hidden player name cannot be empty.");
+        String targetPlayer = args[0].trim();
+        if (targetPlayer.isEmpty()) {
+            sender.sendMessage("Player name cannot be empty.");
             return true;
         }
 
-        String displayPlayer;
-        int messageStartIndex;
-        String secondToken = args[1].trim();
-        if (args.length >= 3 && isKnownName(secondToken) && canImpersonate(player, secondToken)) {
-            displayPlayer = secondToken;
-            messageStartIndex = 2;
-        } else {
-            displayPlayer = player.getName();
-            messageStartIndex = 1;
-        }
-
-        if (!canImpersonate(player, displayPlayer)) {
-            sender.sendMessage("You are not allowed to impersonate " + displayPlayer + ".");
+        if (!canImpersonate(player, targetPlayer)) {
+            sender.sendMessage("You are not allowed to impersonate " + targetPlayer + ".");
             return true;
         }
 
-        String message = String.join(" ", Arrays.copyOfRange(args, messageStartIndex, args.length)).trim();
+        String message = String.join(" ", Arrays.copyOfRange(args, 1, args.length)).trim();
         if (message.isEmpty()) {
             sender.sendMessage("Message cannot be empty.");
             return true;
         }
 
-        permissionStore.registerName(hiddenPlayer);
-        permissionStore.registerName(displayPlayer);
-        chatRouter.sendImpersonatedMessageExcluding(displayPlayer, message, Set.of(hiddenPlayer));
+        permissionStore.registerName(targetPlayer);
+        chatRouter.sendImpersonatedMessageExcluding(targetPlayer, message, Set.of(targetPlayer));
         return true;
     }
 
@@ -68,14 +56,10 @@ public final class ImprCommand implements CommandExecutor, TabCompleter {
         if (!(sender instanceof Player player)) {
             return List.of();
         }
-        Set<String> allowedDisplayNames = permissionStore.getAllowedTargets(player.getName(), player.isOp());
-        Set<String> allNames = permissionStore.getAllKnownNames();
+        Set<String> allowedNames = permissionStore.getAllowedTargets(player.getName(), player.isOp());
 
         if (args.length == 1) {
-            return NameSuggestionUtil.suggest(allNames, args[0], Set.of());
-        }
-        if (args.length == 2) {
-            return NameSuggestionUtil.suggest(allowedDisplayNames, args[1], Set.of());
+            return NameSuggestionUtil.suggest(allowedNames, args[0], Set.of());
         }
         return List.of();
     }
@@ -88,14 +72,5 @@ public final class ImprCommand implements CommandExecutor, TabCompleter {
             return true;
         }
         return permissionStore.canImpersonate(player.getName(), requestedTarget, false);
-    }
-
-    private boolean isKnownName(String candidate) {
-        for (String known : permissionStore.getAllKnownNames()) {
-            if (known.equalsIgnoreCase(candidate)) {
-                return true;
-            }
-        }
-        return false;
     }
 }
