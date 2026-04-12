@@ -1,0 +1,6 @@
+name: DragonEggKeepInventory
+version: 1.0.0
+main: dev.cursor.dragoneggkeepinventory.DragonEggKeepInventoryPlugin
+api-version: "1.21"
+description: Keep inventory on death except dragon egg; announce egg pickups.
+author: cursor
