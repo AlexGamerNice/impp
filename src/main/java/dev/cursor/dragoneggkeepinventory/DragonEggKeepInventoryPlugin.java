@@ -41,24 +41,24 @@ public final class DragonEggKeepInventoryPlugin extends JavaPlugin implements Li
     public void onPlayerDeath(PlayerDeathEvent event) {
         Player player = event.getEntity();
         PlayerInventory inventory = player.getInventory();
-        List<ItemStack> dragonEggDrops = new ArrayList<>();
+        List<ItemStack> forcedDrops = new ArrayList<>();
         UUID playerId = player.getUniqueId();
 
         ItemStack[] allItems = inventory.getContents();
         for (int slot = 0; slot < allItems.length; slot++) {
             ItemStack item = allItems[slot];
-            if (item == null || item.getType() != Material.DRAGON_EGG) {
+            if (item == null || !shouldDropOnDeath(item)) {
                 continue;
             }
 
-            dragonEggDrops.add(item.clone());
+            forcedDrops.add(item.clone());
             inventory.setItem(slot, null);
         }
 
         event.setKeepInventory(true);
         event.getDrops().clear();
-        for (ItemStack dragonEgg : dragonEggDrops) {
-            player.getWorld().dropItemNaturally(player.getLocation(), dragonEgg);
+        for (ItemStack forcedDrop : forcedDrops) {
+            player.getWorld().dropItemNaturally(player.getLocation(), forcedDrop);
         }
 
         if (player.getWorld().getEnvironment() == World.Environment.THE_END) {
@@ -148,5 +148,9 @@ public final class DragonEggKeepInventoryPlugin extends JavaPlugin implements Li
         }
         pushVector.setY(0.35);
         player.setVelocity(pushVector);
+    }
+
+    private boolean shouldDropOnDeath(ItemStack item) {
+        return item.getType() == Material.DRAGON_EGG || item.getType() == Material.SPLASH_POTION;
     }
 }
