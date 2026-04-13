@@ -11,8 +11,8 @@ commands:
     description: "Impersonate while hiding message from one player."
     usage: "/impr <player> <message>"
   imprr:
-    description: "Impersonate while hiding from many players using speaker:"
-    usage: "/imprr <excluded1> <excluded2> ... <speaker>: <message>"
+    description: "Impersonate while hiding many players; speaker: excludes speaker, speaker:: includes speaker."
+    usage: "/imprr <excluded1> <excluded2> ... <speaker>:<message> or <speaker>::<message>"
   impp:
     description: "Grant one username permission to impersonate another."
     usage: "/impp <username1> <username2>"

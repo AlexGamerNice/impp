@@ -27,13 +27,13 @@ public final class ImprrCommand implements CommandExecutor, TabCompleter {
             return true;
         }
         if (args.length < 2) {
-            sender.sendMessage("Usage: /imprr <excluded1> <excluded2> ... <speaker>: <message>");
+            sender.sendMessage("Usage: /imprr <excluded...> <speaker>: <message> or <speaker>:: <message>");
             return true;
         }
 
         int colonIndex = findColonIndex(args);
         if (colonIndex < 0 || colonIndex >= args.length - 1) {
-            sender.sendMessage("Usage: /imprr <excluded1> <excluded2> ... <speaker>: <message>");
+            sender.sendMessage("Usage: /imprr <excluded...> <speaker>: <message> or <speaker>:: <message>");
             return true;
         }
 
@@ -48,7 +48,10 @@ public final class ImprrCommand implements CommandExecutor, TabCompleter {
         }
 
         String speakerToken = args[colonIndex];
-        String speakerName = speakerToken.substring(0, speakerToken.length() - 1).trim();
+        boolean includeSpeaker = speakerToken.endsWith("::");
+        String speakerName = includeSpeaker
+                ? speakerToken.substring(0, speakerToken.length() - 2).trim()
+                : speakerToken.substring(0, speakerToken.length() - 1).trim();
         if (speakerName.isEmpty()) {
             sender.sendMessage("Speaker name cannot be empty.");
             return true;
@@ -66,6 +69,9 @@ public final class ImprrCommand implements CommandExecutor, TabCompleter {
         }
 
         permissionStore.registerName(speakerName);
+        if (!includeSpeaker) {
+            excludedTargets.add(speakerName);
+        }
         chatRouter.sendImpersonatedMessageExcept(speakerName, message, excludedTargets);
         return true;
     }
@@ -86,13 +92,15 @@ public final class ImprrCommand implements CommandExecutor, TabCompleter {
             Set<String> alreadyExcluded = collectExcluded(args, args.length - 2);
             List<String> plain = NameSuggestionUtil.suggest(allowed, lastToken, alreadyExcluded);
             List<String> withColon = NameSuggestionUtil.suggestWithColon(allowed, lastToken, alreadyExcluded);
-            List<String> merged = new ArrayList<>(plain.size() + withColon.size());
+            List<String> withDoubleColon = NameSuggestionUtil.suggestWithDoubleColon(allowed, lastToken, alreadyExcluded);
+            List<String> merged = new ArrayList<>(plain.size() + withColon.size() + withDoubleColon.size());
             merged.addAll(plain);
             merged.addAll(withColon);
+            merged.addAll(withDoubleColon);
             return merged;
         }
 
-        if (colonIndex == args.length - 1 && args[colonIndex].endsWith(":")) {
+        if (colonIndex == args.length - 1 && (args[colonIndex].endsWith(":") || args[colonIndex].endsWith("::"))) {
             return List.of();
         }
         return List.of();
@@ -110,7 +118,7 @@ public final class ImprrCommand implements CommandExecutor, TabCompleter {
 
     private int findColonIndex(String[] args) {
         for (int i = 0; i < args.length; i++) {
-            if (args[i].endsWith(":")) {
+            if (args[i].endsWith("::") || args[i].endsWith(":")) {
                 return i;
             }
         }
@@ -122,7 +130,7 @@ public final class ImprrCommand implements CommandExecutor, TabCompleter {
         int end = Math.min(maxIndex, args.length - 1);
         for (int i = 0; i <= end; i++) {
             String token = args[i];
-            if (token.endsWith(":")) {
+            if (token.endsWith(":") || token.endsWith("::")) {
                 break;
             }
             String name = token.trim();

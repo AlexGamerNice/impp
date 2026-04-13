@@ -34,6 +34,15 @@ public final class NameSuggestionUtil {
         return withColon;
     }
 
+    public static List<String> suggestWithDoubleColon(Set<String> names, String tokenPrefix, Set<String> alreadyUsed) {
+        List<String> base = suggest(names, tokenPrefix, alreadyUsed);
+        List<String> withDoubleColon = new ArrayList<>(base.size());
+        for (String name : base) {
+            withDoubleColon.add(name + "::");
+        }
+        return withDoubleColon;
+    }
+
     private static boolean containsIgnoreCase(Set<String> names, String needle) {
         for (String name : names) {
             if (name.equalsIgnoreCase(needle)) {
