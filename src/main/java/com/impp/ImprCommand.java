@@ -24,6 +24,10 @@ public final class ImprCommand implements CommandExecutor, TabCompleter {
             sender.sendMessage("Only players can use this command.");
             return true;
         }
+        if (args.length == 1 && args[0].equalsIgnoreCase("-help")) {
+            HelpMessages.sendImprHelp(sender);
+            return true;
+        }
         if (args.length < 2) {
             sender.sendMessage("Usage: /impr <player> <message>");
             return true;

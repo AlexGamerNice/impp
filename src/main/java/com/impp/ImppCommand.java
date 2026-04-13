@@ -28,6 +28,11 @@ public final class ImppCommand implements CommandExecutor, TabCompleter {
             @NotNull Command command,
             @NotNull String label,
             @NotNull String[] args) {
+        if (args.length == 1 && args[0].equalsIgnoreCase("-help")) {
+            HelpMessages.sendImppHelp(sender);
+            return true;
+        }
+
         if (!sender.isOp() && !sender.hasPermission("impp.manage")) {
             sender.sendMessage("Only operators can use /impp.");
             return true;

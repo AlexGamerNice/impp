@@ -20,6 +20,10 @@ public final class ImpCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (args.length == 1 && args[0].equalsIgnoreCase("-help")) {
+            HelpMessages.sendImpGlobalHelp(sender);
+            return true;
+        }
         if (args.length < 2) {
             sender.sendMessage("Usage: /imp <username> <message>");
             return true;
