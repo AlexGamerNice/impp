@@ -5,19 +5,19 @@ api-version: "1.20"
 
 commands:
   imp:
-    description: Send a chat message as an allowed username.
-    usage: /imp <username> <message>
+    description: "Send a chat message as an allowed username."
+    usage: "/imp <username> <message>"
   impr:
-    description: Impersonate while hiding message from one player.
-    usage: /impr <player> <message>
+    description: "Impersonate while hiding message from one player."
+    usage: "/impr <player> <message>"
   imprr:
-    description: Impersonate while hiding from many players using speaker:
-    usage: /imprr <excluded1> <excluded2> ... <speaker>: <message>
+    description: "Impersonate while hiding from many players using speaker:"
+    usage: "/imprr <excluded1> <excluded2> ... <speaker>: <message>"
   impp:
-    description: Grant one username permission to impersonate another.
-    usage: /impp <username1> <username2>
+    description: "Grant one username permission to impersonate another."
+    usage: "/impp <username1> <username2>"
 
 permissions:
   impp.manage:
-    description: Allows managing impersonation grants with /impp.
+    description: "Allows managing impersonation grants with /impp."
     default: op
