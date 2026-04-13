@@ -1,7 +1,6 @@
 package com.impp;
 
 import java.util.Set;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -13,8 +12,8 @@ public final class ChatRouter {
         this.plugin = plugin;
     }
 
-    public void relayChatMessage(String senderName, Component message) {
-        Component formatted = Component.text("<" + senderName + "> ").append(message);
+    public void relayChatMessage(String senderName, String message) {
+        String formatted = "<" + senderName + "> " + message;
         for (Player player : Bukkit.getOnlinePlayers()) {
             player.sendMessage(formatted);
         }
@@ -22,7 +21,7 @@ public final class ChatRouter {
     }
 
     public void sendImpersonatedMessage(String senderName, String rawMessage) {
-        relayChatMessage(senderName, Component.text(rawMessage));
+        relayChatMessage(senderName, rawMessage);
     }
 
     public void sendImpersonatedMessageExcluding(String senderName, String rawMessage, Set<String> excludedNames) {
@@ -30,7 +29,7 @@ public final class ChatRouter {
     }
 
     public void sendImpersonatedMessageExcept(String senderName, String rawMessage, Set<String> excludedNames) {
-        Component formatted = Component.text("<" + senderName + "> " + rawMessage);
+        String formatted = "<" + senderName + "> " + rawMessage;
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (isExcluded(player.getName(), excludedNames)) {
                 continue;

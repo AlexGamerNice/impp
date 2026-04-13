@@ -1,10 +1,9 @@
 package com.impp;
 
-import io.papermc.paper.event.player.AsyncChatEvent;
-import net.kyori.adventure.text.Component;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 public final class ChatRelayListener implements Listener {
     private final ImppPlugin plugin;
@@ -16,10 +15,10 @@ public final class ChatRelayListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onAsyncChat(AsyncChatEvent event) {
+    public void onAsyncPlayerChat(AsyncPlayerChatEvent event) {
         event.setCancelled(true);
         String sender = event.getPlayer().getName();
-        Component message = event.message();
+        String message = event.getMessage();
         plugin.getServer().getScheduler().runTask(plugin, () -> chatRouter.relayChatMessage(sender, message));
     }
 }
